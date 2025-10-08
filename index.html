@@ -204,30 +204,35 @@
             </div>
         </section>
 
-        <section id="crucigrama" class="scroll-reveal my-12 md:my-16 pt-16">
+       <section id="crucigrama" class="scroll-reveal my-12 md:my-16 pt-16">
             <h2 class="text-3xl font-bold text-center mb-8 text-indigo-800">¡A Jugar!</h2>
             <p class="text-center text-gray-600 max-w-3xl mx-auto mb-6">
-                Demuestra lo que aprendiste. Completa el crucigrama con las palabras correctas. ¡Puedes usar las flechas del teclado para moverte!
+                Demuestra lo que aprendiste. Completa el crucigrama con las palabras correctas. ¡Usá las flechas del teclado para moverte o el tab! Las respuestas se validan con el botón "Revisar".
             </p>
             <div class="flex flex-col lg:flex-row justify-center items-center lg:items-start gap-8">
-                <div id="crossword-container" class="crossword-grid" style="grid-template-columns: repeat(11, 30px); grid-template-rows: repeat(10, 30px);">
+                <div id="crossword-wrapper" class="bg-white p-6 rounded-xl shadow-lg">
+                    <div id="crossword-container" class="crossword-grid" style="grid-template-columns: repeat(11, 30px); grid-template-rows: repeat(10, 30px);"></div>
+                    <div class="mt-4 flex gap-3 justify-center">
+                        <button id="check-crossword" class="bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors">¡Revisar!</button>
+                        <button id="reveal-crossword" class="bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors">Revelar</button>
+                        <button id="clear-crossword" class="bg-red-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-600 transition-colors">Borrar</button>
                     </div>
-                <div class="text-gray-700">
+                </div>
+        
+                <div class="text-gray-700 max-w-sm">
                     <div class="mb-4">
                         <h3 class="font-bold text-lg mb-2 text-indigo-700">Horizontal</h3>
+                        <p><span class="font-bold">3.</span> Ecosistema de la bahía.</p>
+                        <p><span class="font-bold">4.</span> Ave migratoria, usa la bahía para descansar.</p>
                         <p><span class="font-bold">5.</span> Son como praderas de pasto que se adaptan al agua salada.</p>
                     </div>
                     <div>
                         <h3 class="font-bold text-lg mb-2 text-indigo-700">Verticales</h3>
                         <p><span class="font-bold">1.</span> Costa gigante donde el río y el mar se encuentran.</p>
                         <p><span class="font-bold">2.</span> Son altos y crecen en las zonas más inundadas.</p>
-                        <p><span class="font-bold">3.</span> Ecosistema de la bahía.</p>
-                        <p><span class="font-bold">4.</span> Ave migratoria, usa la bahía para descansar.</p>
                     </div>
+                    <p class="text-sm text-gray-500 mt-4">Tip: escribí en mayúsculas o minúsculas — la comprobación no es sensible al caso.</p>
                 </div>
-            </div>
-            <div class="text-center mt-6">
-                 <button id="check-crossword" class="bg-indigo-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-indigo-700 transition-colors">¡Revisar!</button>
             </div>
         </section>
 
@@ -343,93 +348,201 @@
             }
         });
 
-        // --- SCRIPT PARA EL CRUCIGRAMA INTERACTIVO (VERSIÓN FINAL) ---
-        document.addEventListener('DOMContentLoaded', () => {
-            const crosswordContainer = document.getElementById('crossword-container');
-            const checkButton = document.getElementById('check-crossword');
-            const gridRows = 10;
-            const gridCols = 11;
-            
-            // [Palabra, Fila, Columna, Dirección, Pista]
-            // ESTE ES EL PLANO DEFINITIVO Y CORRECTO
-            const words = [
-                // [Palabra, Fila, Columna, Dirección, Pista]
-                ['PASTIZALES', 5, 0, 'h', 5],
-                ['GABIOTA',    4, 1, 'v', 4], // <-- ESTA ES LA LÍNEA CORREGIDA
-                ['BAHIA',      4, 6, 'v', 1],
-                ['JUNCALES',   0, 7, 'v', 2],
-                ['HUMEDAL',    2, 8, 'v', 3]
-            ];
-            const solutions = {};
+<script>
+/* --- CRUCIGRAMA INTERACTIVO (corregido y mejorado) --- */
+document.addEventListener('DOMContentLoaded', () => {
+    const crosswordContainer = document.getElementById('crossword-container');
+    const checkButton = document.getElementById('check-crossword');
+    const revealButton = document.getElementById('reveal-crossword');
+    const clearButton = document.getElementById('clear-crossword');
 
-            for (let r = 0; r < gridRows; r++) {
-                for (let c = 0; c < gridCols; c++) {
-                    const cellContainer = document.createElement('div');
-                    cellContainer.className = 'cell-container';
-                    cellContainer.id = `container-${r}-${c}`;
-                    crosswordContainer.appendChild(cellContainer);
-                }
+    const gridRows = 10;
+    const gridCols = 11;
+
+    // Definición de palabras: [palabra, filaInicio, colInicio, dir('h'|'v'), numeroPista]
+    // Coordenadas 0-indexadas. Asegurate que todas entren en gridRows x gridCols.
+    const words = [
+        ['BAHIA',     0, 2, 'v', 1], // vertical: B A H I A  (clue 1)
+        ['JUNCALES',  1, 7, 'v', 2], // vertical (clue 2)
+        ['HUMEDAL',   2, 3, 'h', 3], // horizontal (clue 3)
+        ['GAVIOTA',   4, 1, 'h', 4], // horizontal (clue 4)
+        ['PASTIZALES',5, 0, 'h', 5]  // horizontal (clue 5)
+    ];
+
+    // Limpio container (en caso de recarga parcial)
+    crosswordContainer.innerHTML = '';
+
+    // Crear células contenedoras
+    for (let r = 0; r < gridRows; r++) {
+        for (let c = 0; c < gridCols; c++) {
+            const cellContainer = document.createElement('div');
+            cellContainer.className = 'cell-container';
+            cellContainer.id = `container-${r}-${c}`;
+            crosswordContainer.appendChild(cellContainer);
+        }
+    }
+
+    // Mapa solución: cellId -> letter
+    const solutions = {};
+    // Mapa para saber si una celda pertenece a alguna palabra (true)
+    const occupied = {};
+
+    // Añadir palabras al tablero
+    words.forEach(([word, row, col, dir, clueNum]) => {
+        // Poner número de pista solo si la celda es inicio de alguna palabra
+        const clueSpan = document.createElement('span');
+        clueSpan.className = 'clue-number';
+        clueSpan.textContent = clueNum;
+        document.getElementById(`container-${row}-${col}`).appendChild(clueSpan);
+
+        for (let i = 0; i < word.length; i++) {
+            let r = row + (dir === 'v' ? i : 0);
+            let c = col + (dir === 'h' ? i : 0);
+
+            // Seguridad: evitar salir del tablero
+            if (r < 0 || r >= gridRows || c < 0 || c >= gridCols) {
+                console.warn(`Palabra "${word}" se sale del tablero en (${r},${c}). Revisa posiciones.`);
+                continue;
             }
 
-            words.forEach(([word, row, col, dir, clueNum]) => {
-                const clueSpan = document.createElement('span');
-                clueSpan.className = 'clue-number';
-                clueSpan.textContent = clueNum;
-                document.getElementById(`container-${row}-${col}`).appendChild(clueSpan);
+            const cellId = `cell-${r}-${c}`;
+            solutions[cellId] = word[i].toUpperCase();
+            occupied[`${r}-${c}`] = true;
 
-                for (let i = 0; i < word.length; i++) {
-                    let r = row, c = col;
-                    if (dir === 'h') c += i; else r += i;
-
-                    const cellId = `cell-${r}-${c}`;
-                    solutions[cellId] = word[i];
-                    
-                    const container = document.getElementById(`container-${r}-${c}`);
-                    if (!container.querySelector('input')) {
-                        const input = document.createElement('input');
-                        input.type = 'text';
-                        input.maxLength = 1;
-                        input.id = cellId;
-                        input.className = 'crossword-cell';
-                        container.appendChild(input);
-                    }
-                }
-            });
-
-            for (let r = 0; r < gridRows; r++) {
-                for (let c = 0; c < gridCols; c++) {
-                    if (!document.getElementById(`container-${r}-${c}`).hasChildNodes()) {
-                        document.getElementById(`container-${r}-${c}`).classList.add('empty-cell');
-                    }
-                }
+            const container = document.getElementById(`container-${r}-${c}`);
+            // Si ya existe input (por solapamiento), no crear otro
+            if (!container.querySelector('input')) {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.maxLength = 1;
+                input.id = cellId;
+                input.className = 'crossword-cell';
+                input.autocomplete = 'off';
+                input.setAttribute('inputmode', 'latin'); // ayuda en móviles
+                input.dataset.row = r;
+                input.dataset.col = c;
+                container.appendChild(input);
             }
-            
-            crosswordContainer.addEventListener('keydown', (e) => {
-                const target = e.target;
-                if (target.tagName !== 'INPUT') return;
-                const [_, row, col] = target.id.split('-').map(Number);
-                let nextCell;
-                if (e.key === 'ArrowRight') nextCell = document.getElementById(`cell-${row}-${col + 1}`);
-                else if (e.key === 'ArrowLeft') nextCell = document.getElementById(`cell-${row}-${col - 1}`);
-                else if (e.key === 'ArrowDown') nextCell = document.getElementById(`cell-${row + 1}-${col}`);
-                else if (e.key === 'ArrowUp') nextCell = document.getElementById(`cell-${row - 1}-${col}`);
-                if (nextCell) nextCell.focus();
-            });
+        }
+    });
 
-            checkButton.addEventListener('click', () => {
-                for (const cellId in solutions) {
-                    const cell = document.getElementById(cellId);
-                    if (cell) {
-                        cell.classList.remove('correct', 'incorrect');
-                        if (cell.value.toUpperCase() === solutions[cellId]) cell.classList.add('correct');
-                        else if (cell.value !== '') cell.classList.add('incorrect');
-                    }
+    // Marcar como vacías las celdas no ocupadas
+    for (let r = 0; r < gridRows; r++) {
+        for (let c = 0; c < gridCols; c++) {
+            const container = document.getElementById(`container-${r}-${c}`);
+            if (!occupied[`${r}-${c}`]) container.classList.add('empty-cell');
+        }
+    }
+
+    // Utilidades
+    const getInput = (r, c) => document.getElementById(`cell-${r}-${c}`);
+    const focusCell = (r, c) => {
+        const el = getInput(r, c);
+        if (el) el.focus();
+    };
+
+    // Navegación con flechas y auto avance
+    crosswordContainer.addEventListener('keydown', (e) => {
+        const target = e.target;
+        if (target.tagName !== 'INPUT') return;
+        const r = Number(target.dataset.row);
+        const c = Number(target.dataset.col);
+
+        // Flechas
+        if (e.key === 'ArrowRight') { e.preventDefault(); focusCell(r, c + 1); return; }
+        if (e.key === 'ArrowLeft')  { e.preventDefault(); focusCell(r, c - 1); return; }
+        if (e.key === 'ArrowDown')  { e.preventDefault(); focusCell(r + 1, c); return; }
+        if (e.key === 'ArrowUp')    { e.preventDefault(); focusCell(r - 1, c); return; }
+
+        // Al escribir una letra, moverse automáticamente a la derecha si existe
+        // (excepto teclas de control)
+        if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+            // Dejar que la letra se escriba y luego mover el foco ligeramente después
+            setTimeout(() => {
+                // Si la celda tiene ya contenido (o fue escrito) mover a la derecha preferentemente
+                if (target.value.length >= 1) {
+                    // Intento mover a la derecha, si no hay, a la siguiente fila abajo en la misma columna
+                    if (getInput(r, c + 1)) focusCell(r, c + 1);
                 }
-            });
-        });
-    </script>
+            }, 0);
+        }
+    });
+
+    // Forzar mayúsculas en cada input y eliminar clases de marcado al modificar
+    crosswordContainer.addEventListener('input', (e) => {
+        const t = e.target;
+        if (t.tagName !== 'INPUT') return;
+        t.value = t.value.toUpperCase();
+        t.classList.remove('correct', 'incorrect');
+    });
+
+    // Función para chequear respuestas
+    function checkAnswers() {
+        let allBlank = true;
+        for (const cellId in solutions) {
+            const cell = document.getElementById(cellId);
+            if (!cell) continue;
+            const expected = solutions[cellId];
+            const value = (cell.value || '').toUpperCase();
+            if (value !== '') allBlank = false;
+            cell.classList.remove('correct', 'incorrect');
+            if (value === expected) cell.classList.add('correct');
+            else if (value !== '') cell.classList.add('incorrect');
+        }
+        if (allBlank) {
+            // si está todo vacío, mostramos un aviso visual mínimo (shake)
+            crosswordContainer.classList.add('animate-pulse');
+            setTimeout(() => crosswordContainer.classList.remove('animate-pulse'), 400);
+        }
+    }
+
+    // Función para revelar solución (toggle)
+    let revealed = false;
+    function revealAnswers() {
+        revealed = !revealed;
+        for (const cellId in solutions) {
+            const cell = document.getElementById(cellId);
+            if (!cell) continue;
+            if (revealed) {
+                cell.value = solutions[cellId];
+                cell.classList.add('correct');
+            } else {
+                cell.value = '';
+                cell.classList.remove('correct', 'incorrect');
+            }
+        }
+        revealButton.textContent = revealed ? 'Ocultar' : 'Revelar';
+    }
+
+    // Limpiar
+    function clearAnswers() {
+        revealed = false;
+        revealButton.textContent = 'Revelar';
+        for (const cellId in solutions) {
+            const cell = document.getElementById(cellId);
+            if (!cell) continue;
+            cell.value = '';
+            cell.classList.remove('correct', 'incorrect');
+        }
+    }
+
+    // Botones
+    checkButton.addEventListener('click', checkAnswers);
+    revealButton.addEventListener('click', revealAnswers);
+    clearButton.addEventListener('click', clearAnswers);
+
+    // Primer foco en la primera celda ocupada
+    const firstKey = Object.keys(solutions).sort()[0];
+    if (firstKey) {
+        const first = document.getElementById(firstKey);
+        if (first) first.focus();
+    }
+});
+</script>
+
 </body>
 </html>
+
 
 
 
