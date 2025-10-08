@@ -221,17 +221,15 @@
         
                 <div class="text-gray-700 max-w-sm">
                     <div class="mb-4">
-                        <h3 class="font-bold text-lg mb-2 text-indigo-700">Horizontal</h3>
-                        <p><span class="font-bold">3.</span> Ecosistema de la bahía.</p>
-                        <p><span class="font-bold">4.</span> Ave migratoria, usa la bahía para descansar.</p>
-                        <p><span class="font-bold">5.</span> Son como praderas de pasto que se adaptan al agua salada.</p>
+                        <h3 class="font-bold text-lg mb-2 text-indigo-700">Pistas</h3>
+                        <p><span class="font-bold">1. Vertical:</span> Accidente geográfico costero (palabra principal).</p>
+                        <p><span class="font-bold">2. Horizontal (B):</span> Mismo nombre que la palabra principal.</p>
+                        <p><span class="font-bold">3. Horizontal (A):</span> Plantas altas que crecen en zonas inundadas.</p>
+                        <p><span class="font-bold">4. Horizontal (H):</span> Ecosistema principal de la bahía, terreno húmedo.</p>
+                        <p><span class="font-bold">5. Horizontal (I):</span> Ave migratoria en peligro, común en la zona.</p>
+                        <p><span class="font-bold">6. Horizontal (A):</span> Grandes extensiones de pasto adaptadas al agua salada.</p>
                     </div>
-                    <div>
-                        <h3 class="font-bold text-lg mb-2 text-indigo-700">Verticales</h3>
-                        <p><span class="font-bold">1.</span> Costa gigante donde el río y el mar se encuentran.</p>
-                        <p><span class="font-bold">2.</span> Son altos y crecen en las zonas más inundadas.</p>
-                    </div>
-                    <p class="text-sm text-gray-500 mt-4">Tip: escribí en mayúsculas o minúsculas — la comprobación no es sensible al caso.</p>
+                    <p class="text-sm text-gray-500 mt-4">Tip: completá la palabra vertical para ayudarte con las horizontales.</p>
                 </div>
             </div>
         </section>
@@ -361,14 +359,18 @@
                 const gridRows = 10;
                 const gridCols = 11;
         
-                const words = [
-                    ['BAHIA',      0, 2, 'v', 1],
-                    ['JUNCALES',   0, 7, 'v', 2], // Posición corregida
-                    ['PANTANO',    2, 3, 'h', 3], // Palabra cambiada para que encaje
-                    ['GAVIOTA',    4, 1, 'h', 4],
-                    ['PASTIZALES', 5, 0, 'h', 5]
+              const words = [
+                    // La palabra central en formato de columna
+                    ['BAHIA',      0, 4, 'v', 1], 
+                
+                    // Las palabras horizontales que salen de cada letra de BAHIA
+                    ['BAHIA',      0, 4, 'h', 2], // Sale de la B
+                    ['JUNCALES',   1, 0, 'h', 3], // Sale de la A
+                    ['HUMEDAL',    2, 4, 'h', 4], // Sale de la H
+                    ['GAVIOTA',    3, 1, 'h', 5], // Sale de la I
+                    ['PASTIZALES', 4, 3, 'h', 6]  // Sale de la A
                 ];
-        
+                    
                 crosswordContainer.innerHTML = '';
         
                 const solutions = {};
@@ -487,5 +489,6 @@
     </script>
 </body>
 </html>
+
 
 
