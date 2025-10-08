@@ -278,276 +278,248 @@
     </div>
 
     <script>
-        // --- SCRIPT PARA ANIMAR SECCIONES AL HACER SCROLL ---
-        const revealElements = document.querySelectorAll('.scroll-reveal');
-        const revealObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) entry.target.classList.add('visible');
+        // Todo el JavaScript se ejecuta cuando el documento HTML está listo.
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- SCRIPT PARA ANIMAR SECCIONES AL HACER SCROLL ---
+            const revealElements = document.querySelectorAll('.scroll-reveal');
+            const revealObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) entry.target.classList.add('visible');
+                });
+            }, { threshold: 0.1 });
+            revealElements.forEach(el => revealObserver.observe(el));
+
+            // --- SCRIPT PARA MARCAR EL BOTÓN ACTIVO EN EL MENÚ ---
+            const sections = document.querySelectorAll('section, header');
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sectionObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const activeId = entry.target.id === 'inicio' ? 'desc' : entry.target.id;
+                        navLinks.forEach(link => {
+                            link.classList.toggle('active', link.getAttribute('href') === `#${activeId}`);
+                        });
+                    }
+                });
+            }, { root: null, rootMargin: '0px', threshold: 0.4 });
+            sections.forEach(section => sectionObserver.observe(section));
+
+            // --- SCRIPT PARA LA GALERÍA EMERGENTE (LIGHTBOX) ---
+            const galleryItems = document.querySelectorAll('.gallery-item');
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightbox-img');
+            let currentIndex = 0;
+            const images = Array.from(galleryItems, item => item.src);
+
+            function updateLightbox() {
+                if (lightbox.classList.contains('hidden')) return;
+                lightboxImg.src = images[currentIndex];
+            }
+
+            galleryItems.forEach((item, index) => {
+                item.addEventListener('click', () => {
+                    currentIndex = index;
+                    lightbox.classList.remove('hidden');
+                    lightbox.classList.add('flex');
+                    updateLightbox();
+                });
             });
-        }, { threshold: 0.1 });
-        revealElements.forEach(el => revealObserver.observe(el));
 
-        // --- SCRIPT PARA MARCAR EL BOTÓN ACTIVO EN EL MENÚ ---
-        const sections = document.querySelectorAll('section, header');
-        const navLinks = document.querySelectorAll('.nav-link');
-        const sectionObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const activeId = entry.target.id === 'inicio' ? 'desc' : entry.target.id;
-                    navLinks.forEach(link => {
-                        link.classList.toggle('active', link.getAttribute('href') === `#${activeId}`);
-                    });
-                }
-            });
-        }, { root: null, rootMargin: '0px', threshold: 0.4 });
-        sections.forEach(section => sectionObserver.observe(section));
+            function closeLightbox() {
+                lightbox.classList.add('hidden');
+                lightbox.classList.remove('flex');
+            }
 
-        // --- SCRIPT PARA LA GALERÍA EMERGENTE (LIGHTBOX) ---
-        const galleryItems = document.querySelectorAll('.gallery-item');
-        const lightbox = document.getElementById('lightbox');
-        const lightboxImg = document.getElementById('lightbox-img');
-        let currentIndex = 0;
-        const images = Array.from(galleryItems, item => item.src);
-
-        function updateLightbox() {
-            if (lightbox.classList.contains('hidden')) return;
-            lightboxImg.src = images[currentIndex];
-        }
-
-        galleryItems.forEach((item, index) => {
-            item.addEventListener('click', () => {
-                currentIndex = index;
-                lightbox.classList.remove('hidden');
-                lightbox.classList.add('flex');
+            document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+            document.getElementById('lightbox-prev').addEventListener('click', () => {
+                currentIndex = (currentIndex - 1 + images.length) % images.length;
                 updateLightbox();
             });
-        });
-
-        function closeLightbox() {
-            lightbox.classList.add('hidden');
-            lightbox.classList.remove('flex');
-        }
-
-        document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
-        document.getElementById('lightbox-prev').addEventListener('click', () => {
-            currentIndex = (currentIndex - 1 + images.length) % images.length;
-            updateLightbox();
-        });
-        document.getElementById('lightbox-next').addEventListener('click', () => {
-            currentIndex = (currentIndex + 1) % images.length;
-            updateLightbox();
-        });
-        lightbox.addEventListener('click', (e) => {
-            if (e.target === lightbox) closeLightbox();
-        });
-        document.addEventListener('keydown', (e) => {
-            if (!lightbox.classList.contains('hidden')) {
-                if (e.key === 'ArrowRight') document.getElementById('lightbox-next').click();
-                if (e.key === 'ArrowLeft') document.getElementById('lightbox-prev').click();
-                if (e.key === 'Escape') closeLightbox();
-            }
-        });
-
-<script>
-/* --- CRUCIGRAMA INTERACTIVO (corregido y mejorado) --- */
-document.addEventListener('DOMContentLoaded', () => {
-    const crosswordContainer = document.getElementById('crossword-container');
-    const checkButton = document.getElementById('check-crossword');
-    const revealButton = document.getElementById('reveal-crossword');
-    const clearButton = document.getElementById('clear-crossword');
-
-    const gridRows = 10;
-    const gridCols = 11;
-
-    // Definición de palabras: [palabra, filaInicio, colInicio, dir('h'|'v'), numeroPista]
-    // Coordenadas 0-indexadas. Asegurate que todas entren en gridRows x gridCols.
-    const words = [
-        ['BAHIA',     0, 2, 'v', 1], // vertical: B A H I A  (clue 1)
-        ['JUNCALES',  1, 7, 'v', 2], // vertical (clue 2)
-        ['HUMEDAL',   2, 3, 'h', 3], // horizontal (clue 3)
-        ['GAVIOTA',   4, 1, 'h', 4], // horizontal (clue 4)
-        ['PASTIZALES',5, 0, 'h', 5]  // horizontal (clue 5)
-    ];
-
-    // Limpio container (en caso de recarga parcial)
-    crosswordContainer.innerHTML = '';
-
-    // Crear células contenedoras
-    for (let r = 0; r < gridRows; r++) {
-        for (let c = 0; c < gridCols; c++) {
-            const cellContainer = document.createElement('div');
-            cellContainer.className = 'cell-container';
-            cellContainer.id = `container-${r}-${c}`;
-            crosswordContainer.appendChild(cellContainer);
-        }
-    }
-
-    // Mapa solución: cellId -> letter
-    const solutions = {};
-    // Mapa para saber si una celda pertenece a alguna palabra (true)
-    const occupied = {};
-
-    // Añadir palabras al tablero
-    words.forEach(([word, row, col, dir, clueNum]) => {
-        // Poner número de pista solo si la celda es inicio de alguna palabra
-        const clueSpan = document.createElement('span');
-        clueSpan.className = 'clue-number';
-        clueSpan.textContent = clueNum;
-        document.getElementById(`container-${row}-${col}`).appendChild(clueSpan);
-
-        for (let i = 0; i < word.length; i++) {
-            let r = row + (dir === 'v' ? i : 0);
-            let c = col + (dir === 'h' ? i : 0);
-
-            // Seguridad: evitar salir del tablero
-            if (r < 0 || r >= gridRows || c < 0 || c >= gridCols) {
-                console.warn(`Palabra "${word}" se sale del tablero en (${r},${c}). Revisa posiciones.`);
-                continue;
-            }
-
-            const cellId = `cell-${r}-${c}`;
-            solutions[cellId] = word[i].toUpperCase();
-            occupied[`${r}-${c}`] = true;
-
-            const container = document.getElementById(`container-${r}-${c}`);
-            // Si ya existe input (por solapamiento), no crear otro
-            if (!container.querySelector('input')) {
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.maxLength = 1;
-                input.id = cellId;
-                input.className = 'crossword-cell';
-                input.autocomplete = 'off';
-                input.setAttribute('inputmode', 'latin'); // ayuda en móviles
-                input.dataset.row = r;
-                input.dataset.col = c;
-                container.appendChild(input);
-            }
-        }
-    });
-
-    // Marcar como vacías las celdas no ocupadas
-    for (let r = 0; r < gridRows; r++) {
-        for (let c = 0; c < gridCols; c++) {
-            const container = document.getElementById(`container-${r}-${c}`);
-            if (!occupied[`${r}-${c}`]) container.classList.add('empty-cell');
-        }
-    }
-
-    // Utilidades
-    const getInput = (r, c) => document.getElementById(`cell-${r}-${c}`);
-    const focusCell = (r, c) => {
-        const el = getInput(r, c);
-        if (el) el.focus();
-    };
-
-    // Navegación con flechas y auto avance
-    crosswordContainer.addEventListener('keydown', (e) => {
-        const target = e.target;
-        if (target.tagName !== 'INPUT') return;
-        const r = Number(target.dataset.row);
-        const c = Number(target.dataset.col);
-
-        // Flechas
-        if (e.key === 'ArrowRight') { e.preventDefault(); focusCell(r, c + 1); return; }
-        if (e.key === 'ArrowLeft')  { e.preventDefault(); focusCell(r, c - 1); return; }
-        if (e.key === 'ArrowDown')  { e.preventDefault(); focusCell(r + 1, c); return; }
-        if (e.key === 'ArrowUp')    { e.preventDefault(); focusCell(r - 1, c); return; }
-
-        // Al escribir una letra, moverse automáticamente a la derecha si existe
-        // (excepto teclas de control)
-        if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
-            // Dejar que la letra se escriba y luego mover el foco ligeramente después
-            setTimeout(() => {
-                // Si la celda tiene ya contenido (o fue escrito) mover a la derecha preferentemente
-                if (target.value.length >= 1) {
-                    // Intento mover a la derecha, si no hay, a la siguiente fila abajo en la misma columna
-                    if (getInput(r, c + 1)) focusCell(r, c + 1);
+            document.getElementById('lightbox-next').addEventListener('click', () => {
+                currentIndex = (currentIndex + 1) % images.length;
+                updateLightbox();
+            });
+            lightbox.addEventListener('click', (e) => {
+                if (e.target === lightbox) closeLightbox();
+            });
+            document.addEventListener('keydown', (e) => {
+                if (!lightbox.classList.contains('hidden')) {
+                    if (e.key === 'ArrowRight') document.getElementById('lightbox-next').click();
+                    if (e.key === 'ArrowLeft') document.getElementById('lightbox-prev').click();
+                    if (e.key === 'Escape') closeLightbox();
                 }
-            }, 0);
-        }
-    });
+            });
 
-    // Forzar mayúsculas en cada input y eliminar clases de marcado al modificar
-    crosswordContainer.addEventListener('input', (e) => {
-        const t = e.target;
-        if (t.tagName !== 'INPUT') return;
-        t.value = t.value.toUpperCase();
-        t.classList.remove('correct', 'incorrect');
-    });
+            /* --- CRUCIGRAMA INTERACTIVO (corregido y mejorado) --- */
+            const crosswordContainer = document.getElementById('crossword-container');
+            const checkButton = document.getElementById('check-crossword');
+            const revealButton = document.getElementById('reveal-crossword');
+            const clearButton = document.getElementById('clear-crossword');
 
-    // Función para chequear respuestas
-    function checkAnswers() {
-        let allBlank = true;
-        for (const cellId in solutions) {
-            const cell = document.getElementById(cellId);
-            if (!cell) continue;
-            const expected = solutions[cellId];
-            const value = (cell.value || '').toUpperCase();
-            if (value !== '') allBlank = false;
-            cell.classList.remove('correct', 'incorrect');
-            if (value === expected) cell.classList.add('correct');
-            else if (value !== '') cell.classList.add('incorrect');
-        }
-        if (allBlank) {
-            // si está todo vacío, mostramos un aviso visual mínimo (shake)
-            crosswordContainer.classList.add('animate-pulse');
-            setTimeout(() => crosswordContainer.classList.remove('animate-pulse'), 400);
-        }
-    }
+            const gridRows = 10;
+            const gridCols = 11;
 
-    // Función para revelar solución (toggle)
-    let revealed = false;
-    function revealAnswers() {
-        revealed = !revealed;
-        for (const cellId in solutions) {
-            const cell = document.getElementById(cellId);
-            if (!cell) continue;
-            if (revealed) {
-                cell.value = solutions[cellId];
-                cell.classList.add('correct');
-            } else {
-                cell.value = '';
-                cell.classList.remove('correct', 'incorrect');
+            // Definición de palabras: [palabra, filaInicio, colInicio, dir('h'|'v'), numeroPista]
+            const words = [
+                ['BAHIA',      0, 2, 'v', 1], // vertical: B A H I A  (clue 1)
+                ['JUNCALES',   1, 7, 'v', 2], // vertical (clue 2)
+                ['HUMEDAL',    2, 3, 'h', 3], // horizontal (clue 3)
+                ['GAVIOTA',    4, 1, 'h', 4], // horizontal (clue 4)
+                ['PASTIZALES', 5, 0, 'h', 5]  // horizontal (clue 5)
+            ];
+
+            crosswordContainer.innerHTML = '';
+
+            for (let r = 0; r < gridRows; r++) {
+                for (let c = 0; c < gridCols; c++) {
+                    const cellContainer = document.createElement('div');
+                    cellContainer.className = 'cell-container';
+                    cellContainer.id = `container-${r}-${c}`;
+                    crosswordContainer.appendChild(cellContainer);
+                }
             }
-        }
-        revealButton.textContent = revealed ? 'Ocultar' : 'Revelar';
-    }
 
-    // Limpiar
-    function clearAnswers() {
-        revealed = false;
-        revealButton.textContent = 'Revelar';
-        for (const cellId in solutions) {
-            const cell = document.getElementById(cellId);
-            if (!cell) continue;
-            cell.value = '';
-            cell.classList.remove('correct', 'incorrect');
-        }
-    }
+            const solutions = {};
+            const occupied = {};
 
-    // Botones
-    checkButton.addEventListener('click', checkAnswers);
-    revealButton.addEventListener('click', revealAnswers);
-    clearButton.addEventListener('click', clearAnswers);
+            words.forEach(([word, row, col, dir, clueNum]) => {
+                const clueSpan = document.createElement('span');
+                clueSpan.className = 'clue-number';
+                clueSpan.textContent = clueNum;
+                document.getElementById(`container-${row}-${col}`).appendChild(clueSpan);
 
-    // Primer foco en la primera celda ocupada
-    const firstKey = Object.keys(solutions).sort()[0];
-    if (firstKey) {
-        const first = document.getElementById(firstKey);
-        if (first) first.focus();
-    }
-});
-</script>
+                for (let i = 0; i < word.length; i++) {
+                    let r = row + (dir === 'v' ? i : 0);
+                    let c = col + (dir === 'h' ? i : 0);
 
+                    if (r < 0 || r >= gridRows || c < 0 || c >= gridCols) {
+                        console.warn(`Palabra "${word}" se sale del tablero en (${r},${c}). Revisa posiciones.`);
+                        continue;
+                    }
+
+                    const cellId = `cell-${r}-${c}`;
+                    solutions[cellId] = word[i].toUpperCase();
+                    occupied[`${r}-${c}`] = true;
+
+                    const container = document.getElementById(`container-${r}-${c}`);
+                    if (!container.querySelector('input')) {
+                        const input = document.createElement('input');
+                        input.type = 'text';
+                        input.maxLength = 1;
+                        input.id = cellId;
+                        input.className = 'crossword-cell';
+                        input.autocomplete = 'off';
+                        input.setAttribute('inputmode', 'latin');
+                        input.dataset.row = r;
+                        input.dataset.col = c;
+                        container.appendChild(input);
+                    }
+                }
+            });
+
+            for (let r = 0; r < gridRows; r++) {
+                for (let c = 0; c < gridCols; c++) {
+                    if (!occupied[`${r}-${c}`]) {
+                        document.getElementById(`container-${r}-${c}`).classList.add('empty-cell');
+                    }
+                }
+            }
+
+            const getInput = (r, c) => document.getElementById(`cell-${r}-${c}`);
+            const focusCell = (r, c) => {
+                const el = getInput(r, c);
+                if (el) el.focus();
+            };
+
+            crosswordContainer.addEventListener('keydown', (e) => {
+                const target = e.target;
+                if (target.tagName !== 'INPUT') return;
+                const r = Number(target.dataset.row);
+                const c = Number(target.dataset.col);
+
+                if (e.key === 'ArrowRight') { e.preventDefault(); focusCell(r, c + 1); return; }
+                if (e.key === 'ArrowLeft')  { e.preventDefault(); focusCell(r, c - 1); return; }
+                if (e.key === 'ArrowDown')  { e.preventDefault(); focusCell(r + 1, c); return; }
+                if (e.key === 'ArrowUp')    { e.preventDefault(); focusCell(r - 1, c); return; }
+
+                if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+                    setTimeout(() => {
+                        if (target.value.length >= 1) {
+                            if (getInput(r, c + 1)) {
+                                focusCell(r, c + 1);
+                            }
+                        }
+                    }, 0);
+                }
+            });
+
+            crosswordContainer.addEventListener('input', (e) => {
+                const t = e.target;
+                if (t.tagName !== 'INPUT') return;
+                t.value = t.value.toUpperCase();
+                t.classList.remove('correct', 'incorrect');
+            });
+
+            function checkAnswers() {
+                let allBlank = true;
+                for (const cellId in solutions) {
+                    const cell = document.getElementById(cellId);
+                    if (!cell) continue;
+                    const expected = solutions[cellId];
+                    const value = (cell.value || '').toUpperCase();
+                    if (value !== '') allBlank = false;
+                    cell.classList.remove('correct', 'incorrect');
+                    if (value === expected) {
+                        cell.classList.add('correct');
+                    } else if (value !== '') {
+                        cell.classList.add('incorrect');
+                    }
+                }
+                if (allBlank) {
+                    crosswordContainer.classList.add('animate-pulse');
+                    setTimeout(() => crosswordContainer.classList.remove('animate-pulse'), 400);
+                }
+            }
+
+            let revealed = false;
+            function revealAnswers() {
+                revealed = !revealed;
+                for (const cellId in solutions) {
+                    const cell = document.getElementById(cellId);
+                    if (!cell) continue;
+                    if (revealed) {
+                        cell.value = solutions[cellId];
+                        cell.classList.add('correct');
+                    } else {
+                        cell.value = '';
+                        cell.classList.remove('correct', 'incorrect');
+                    }
+                }
+                revealButton.textContent = revealed ? 'Ocultar' : 'Revelar';
+            }
+
+            function clearAnswers() {
+                revealed = false;
+                revealButton.textContent = 'Revelar';
+                for (const cellId in solutions) {
+                    const cell = document.getElementById(cellId);
+                    if (!cell) continue;
+                    cell.value = '';
+                    cell.classList.remove('correct', 'incorrect');
+                }
+            }
+
+            checkButton.addEventListener('click', checkAnswers);
+            revealButton.addEventListener('click', revealAnswers);
+            clearButton.addEventListener('click', clearAnswers);
+
+            const firstKey = Object.keys(solutions).sort()[0];
+            if (firstKey) {
+                const first = document.getElementById(firstKey);
+                if (first) first.focus();
+            }
+        });
+    </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
