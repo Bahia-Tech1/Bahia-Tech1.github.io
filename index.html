@@ -352,11 +352,12 @@
 
             // Este es el bloque que debes reemplazar en tu código
             const words = [
+            // [Palabra, Fila, Columna, Dirección, Pista]
                 ['PASTIZALES', 5, 0, 'h', 5],
-                ['GABIOTA', 0, 1, 'v', 4],    // Se cruza en la 'A' de Pastizales (fila 5, col 1)
-                ['HUMEDAL', 2, 7, 'v', 3],    // Se cruza en la 'L' de Pastizales (fila 5, col 7)
-                ['BAHIA', 4, 6, 'v', 1],      // Se cruza en la 'A' de Pastizales (fila 5, col 6)
-                ['JUNCALES', 2, 10, 'v', 2]   // Se cruza en la 'S' de Pastizales (fila 5, col 10)
+                ['GABIOTA',    0, 1, 'v', 4],
+                ['HUMEDAL',    2, 8, 'v', 3],
+                ['BAHIA',      4, 6, 'v', 1],
+                ['JUNCALES',   0, 7, 'v', 2]
             ];
             const solutions = {};
 
@@ -428,6 +429,7 @@
     </script>
 </body>
 </html>
+
 
 
 
