@@ -12,21 +12,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     
     <style>
-        /* Agregamos scroll-behavior para que el desplazamiento del menú sea suave */
+        /* Estilos Generales */
         html {
             scroll-behavior: smooth;
-            /* Agregamos padding-bottom para que el menú fijo no tape el contenido final */
             padding-bottom: 80px; 
         }
-
         body {
             font-family: 'Poppins', sans-serif;
         }
-
         .hero-gradient {
             background-image: linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.1));
         }
 
+        /* Animación de Scroll */
         .scroll-reveal {
             opacity: 0;
             transform: translateY(30px);
@@ -37,29 +35,30 @@
             transform: translateY(0);
         }
 
-        /* Estilos para el botón activo del menú */
-        .nav-link.active svg {
-            color: #0891b2; /* Un color cian brillante */
-        }
-        .nav-link.active span {
-            color: #0e7490;
+        /* Estilos del Menú */
+        .nav-link.active svg, .nav-link.active span {
+            color: #0891b2; /* cian brillante */
         }
         
+        /* Estilos Galería Lightbox */
         #lightbox.active {
             display: flex;
         }
 
-        /* --- NUEVOS ESTILOS PARA EL CRUCIGRAMA --- */
+        /* --- ESTILOS PARA EL CRUCIGRAMA --- */
         .crossword-grid {
             display: grid;
-            grid-template-columns: repeat(12, 30px);
-            grid-template-rows: repeat(8, 30px);
             gap: 2px;
-            margin-bottom: 1.5rem; /* 24px */
+            margin-bottom: 1.5rem;
         }
-        .crossword-cell {
+        .cell-container {
+            position: relative;
             width: 30px;
             height: 30px;
+        }
+        .crossword-cell {
+            width: 100%;
+            height: 100%;
             border: 1px solid #d1d5db; /* gray-300 */
             text-align: center;
             font-size: 1.125rem; /* text-lg */
@@ -67,7 +66,7 @@
             caret-color: #0891b2; /* cyan-700 */
         }
         .crossword-cell:focus {
-            outline: 2px solid #0891b2; /* cyan-700 */
+            outline: 2px solid #0891b2;
             border-color: #0891b2;
         }
         .crossword-cell.correct {
@@ -85,15 +84,12 @@
         }
         .clue-number {
             position: absolute;
-            font-size: 0.7rem;
+            font-size: 0.6rem;
             top: 1px;
             left: 2px;
             color: #6b7280; /* gray-500 */
+            pointer-events: none;
         }
-        .cell-container {
-            position: relative;
-        }
-
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -174,22 +170,12 @@
                     </div>
                 </div>
                 <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                    <div class="relative w-full h-48">
-                        <iframe class="absolute top-0 left-0 w-full h-full" src="https://www.youtube.com/embed/3ZQxP4Ygbt8" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                    </div>
-                    <div class="p-4">
-                        <h3 class="font-bold text-xl mb-2">Tordo Músico Cantando</h3>
-                        <p class="text-gray-600 text-sm">Escucha el hermoso canto del Tordo Músico, una de las aves que podrías encontrar en la bahía.</p>
-                    </div>
+                    <div class="relative w-full h-48"><iframe class="absolute top-0 left-0 w-full h-full" src="https://www.youtube.com/embed/3ZQxP4Ygbt8" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+                    <div class="p-4"><h3 class="font-bold text-xl mb-2">Tordo Músico Cantando</h3><p class="text-gray-600 text-sm">Escucha el hermoso canto del Tordo Músico, una de las aves que podrías encontrar en la bahía.</p></div>
                 </div>
                 <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                    <div class="relative w-full h-48">
-                        <iframe class="absolute top-0 left-0 w-full h-full" src="https://www.youtube.com/embed/SWU6rswMyQY" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                    </div>
-                    <div class="p-4">
-                        <h3 class="font-bold text-xl mb-2">Chorlo Pampa o Dorado</h3>
-                        <p class="text-gray-600 text-sm">Observa al Chorlo Pampa o Dorado en su hábitat natural, un ave migratoria que visita la bahía.</p>
-                    </div>
+                    <div class="relative w-full h-48"><iframe class="absolute top-0 left-0 w-full h-full" src="https://www.youtube.com/embed/SWU6rswMyQY" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+                    <div class="p-4"><h3 class="font-bold text-xl mb-2">Chorlo Pampa o Dorado</h3><p class="text-gray-600 text-sm">Observa al Chorlo Pampa o Dorado en su hábitat natural, un ave migratoria que visita la bahía.</p></div>
                 </div>
             </div>
         </section>
@@ -199,17 +185,11 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col sm:flex-row items-center">
                     <img src="src/Pastizal.jpg" alt="Pastizales" class="w-full sm:w-1/3 h-48 sm:h-full object-cover">
-                    <div class="p-4">
-                        <h3 class="font-bold text-xl mb-2">Pastizales y Espartillares</h3>
-                        <p class="text-gray-600 text-sm">Son como "praderas" de pasto que se adaptan al agua salada. Son el hogar y la comida de muchos animales.</p>
-                    </div>
+                    <div class="p-4"><h3 class="font-bold text-xl mb-2">Pastizales y Espartillares</h3><p class="text-gray-600 text-sm">Son como "praderas" de pasto que se adaptan al agua salada. Son el hogar y la comida de muchos animales.</p></div>
                 </div>
                 <div class="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col sm:flex-row items-center">
                     <img src="src/Juncales.jpg" alt="Juncales" class="w-full sm:w-1/3 h-48 sm:h-full object-cover">
-                    <div class="p-4">
-                        <h3 class="font-bold text-xl mb-2">Juncales</h3>
-                        <p class="text-gray-600 text-sm">Estos juncos altos crecen en las zonas más inundadas y ayudan a limpiar el agua, ¡como un filtro natural!</p>
-                    </div>
+                    <div class="p-4"><h3 class="font-bold text-xl mb-2">Juncales</h3><p class="text-gray-600 text-sm">Estos juncos altos crecen en las zonas más inundadas y ayudan a limpiar el agua, ¡como un filtro natural!</p></div>
                 </div>
             </div>
         </section>
@@ -224,15 +204,14 @@
             </div>
         </section>
 
-<section id="crucigrama" class="scroll-reveal my-12 md:my-16 pt-16">
+        <section id="crucigrama" class="scroll-reveal my-12 md:my-16 pt-16">
             <h2 class="text-3xl font-bold text-center mb-8 text-indigo-800">¡A Jugar!</h2>
             <p class="text-center text-gray-600 max-w-3xl mx-auto mb-6">
                 Demuestra lo que aprendiste. Completa el crucigrama con las palabras correctas. ¡Puedes usar las flechas del teclado para moverte!
             </p>
             <div class="flex flex-col lg:flex-row justify-center items-center lg:items-start gap-8">
-                <div id="crossword-container" class="crossword-grid" style="grid-template-columns: repeat(12, 30px); grid-template-rows: repeat(10, 30px);">
+                <div id="crossword-container" class="crossword-grid" style="grid-template-columns: repeat(11, 30px); grid-template-rows: repeat(10, 30px);">
                     </div>
-
                 <div class="text-gray-700">
                     <div class="mb-4">
                         <h3 class="font-bold text-lg mb-2 text-indigo-700">Horizontal</h3>
@@ -248,9 +227,7 @@
                 </div>
             </div>
             <div class="text-center mt-6">
-                 <button id="check-crossword" class="bg-indigo-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-indigo-700 transition-colors">
-                    ¡Revisar!
-                </button>
+                 <button id="check-crossword" class="bg-indigo-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-indigo-700 transition-colors">¡Revisar!</button>
             </div>
         </section>
 
@@ -279,30 +256,12 @@
 
     <nav class="fixed bottom-0 left-0 right-0 bg-white shadow-t-lg border-t border-gray-200 z-50">
         <div class="flex justify-around max-w-xl mx-auto">
-            <a href="#desc" class="nav-link flex-1 text-center py-2 px-1 text-gray-500 hover:text-cyan-600 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                <span class="text-xs">Info</span>
-            </a>
-            <a href="#fauna" class="nav-link flex-1 text-center py-2 px-1 text-gray-500 hover:text-cyan-600 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.538 15.016L12 17.554l-2.538-2.538a4 4 0 115.076 0zM5.462 9.016L8 11.554l2.538-2.538a4 4 0 10-5.076 0z" /></svg>
-                <span class="text-xs">Fauna</span>
-            </a>
-            <a href="#flora" class="nav-link flex-1 text-center py-2 px-1 text-gray-500 hover:text-cyan-600 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                <span class="text-xs">Flora</span>
-            </a>
-            <a href="#mapa" class="nav-link flex-1 text-center py-2 px-1 text-gray-500 hover:text-cyan-600 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l5.447 2.724A1 1 0 0021 16.382V5.618a1 1 0 00-1.447-.894L15 7m-6 3l6-3" /></svg>
-                <span class="text-xs">Mapa</span>
-            </a>
-             <a href="#crucigrama" class="nav-link flex-1 text-center py-2 px-1 text-gray-500 hover:text-cyan-600 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" /></svg>
-                <span class="text-xs">Juego</span>
-            </a>
-            <a href="#equipo" class="nav-link flex-1 text-center py-2 px-1 text-gray-500 hover:text-cyan-600 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283-.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
-                <span class="text-xs">Equipo</span>
-            </a>
+            <a href="#desc" class="nav-link flex-1 text-center py-2 px-1 text-gray-500 hover:text-cyan-600 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg><span class="text-xs">Info</span></a>
+            <a href="#fauna" class="nav-link flex-1 text-center py-2 px-1 text-gray-500 hover:text-cyan-600 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.538 15.016L12 17.554l-2.538-2.538a4 4 0 115.076 0zM5.462 9.016L8 11.554l2.538-2.538a4 4 0 10-5.076 0z" /></svg><span class="text-xs">Fauna</span></a>
+            <a href="#flora" class="nav-link flex-1 text-center py-2 px-1 text-gray-500 hover:text-cyan-600 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5.636 18.364a9 9 0 010-12.728m12.728 0a9 9 0 010 12.728m-9.9-2.829a1.5 1.5 0 100-2.121 1.5 1.5 0 000 2.121zM12 6a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 0112 6zm0 10.5a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5a.75.75 0 01.75-.75zM6 12a.75.75 0 01.75-.75h1.5a.75.75 0 010 1.5h-1.5A.75.75 0 016 12zm10.5 0a.75.75 0 01.75-.75h1.5a.75.75 0 010 1.5h-1.5a.75.75 0 01-.75-.75z"/></svg><span class="text-xs">Flora</span></a>
+            <a href="#mapa" class="nav-link flex-1 text-center py-2 px-1 text-gray-500 hover:text-cyan-600 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l5.447 2.724A1 1 0 0021 16.382V5.618a1 1 0 00-1.447-.894L15 7m-6 3l6-3" /></svg><span class="text-xs">Mapa</span></a>
+             <a href="#crucigrama" class="nav-link flex-1 text-center py-2 px-1 text-gray-500 hover:text-cyan-600 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z" /></svg><span class="text-xs">Juego</span></a>
+            <a href="#equipo" class="nav-link flex-1 text-center py-2 px-1 text-gray-500 hover:text-cyan-600 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283-.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg><span class="text-xs">Equipo</span></a>
         </div>
     </nav>
     
@@ -318,119 +277,88 @@
         const revealElements = document.querySelectorAll('.scroll-reveal');
         const revealObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
+                if (entry.isIntersecting) entry.target.classList.add('visible');
             });
         }, { threshold: 0.1 });
-
-        revealElements.forEach(el => {
-            revealObserver.observe(el);
-        });
+        revealElements.forEach(el => revealObserver.observe(el));
 
         // --- SCRIPT PARA MARCAR EL BOTÓN ACTIVO EN EL MENÚ ---
         const sections = document.querySelectorAll('section, header');
         const navLinks = document.querySelectorAll('.nav-link');
-        
-        const observerOptions = {
-            root: null,
-            rootMargin: '0px',
-            threshold: 0.4 
-        };
-
-        const sectionObserver = new IntersectionObserver((entries, observer) => {
+        const sectionObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    const id = entry.target.getAttribute('id');
-                    const activeId = id === 'inicio' ? 'desc' : id; 
-                    
+                    const activeId = entry.target.id === 'inicio' ? 'desc' : entry.target.id;
                     navLinks.forEach(link => {
-                        link.classList.remove('active');
-                        if (link.getAttribute('href') === `#${activeId}`) {
-                            link.classList.add('active');
-                        }
+                        link.classList.toggle('active', link.getAttribute('href') === `#${activeId}`);
                     });
                 }
             });
-        }, observerOptions);
-
-        sections.forEach(section => {
-            sectionObserver.observe(section);
-        });
+        }, { root: null, rootMargin: '0px', threshold: 0.4 });
+        sections.forEach(section => sectionObserver.observe(section));
 
         // --- SCRIPT PARA LA GALERÍA EMERGENTE (LIGHTBOX) ---
         const galleryItems = document.querySelectorAll('.gallery-item');
         const lightbox = document.getElementById('lightbox');
         const lightboxImg = document.getElementById('lightbox-img');
-        const lightboxClose = document.getElementById('lightbox-close');
-        const lightboxPrev = document.getElementById('lightbox-prev');
-        const lightboxNext = document.getElementById('lightbox-next');
-
         let currentIndex = 0;
-        const images = Array.from(galleryItems).map(item => item.src);
+        const images = Array.from(galleryItems, item => item.src);
 
-        function showImage(index) {
-            lightboxImg.src = images[index];
-            currentIndex = index;
-            lightbox.classList.remove('hidden');
-            lightbox.classList.add('flex');
+        function updateLightbox() {
+            if (lightbox.classList.contains('hidden')) return;
+            lightboxImg.src = images[currentIndex];
         }
 
         galleryItems.forEach((item, index) => {
             item.addEventListener('click', () => {
-                showImage(index);
+                currentIndex = index;
+                lightbox.classList.remove('hidden');
+                lightbox.classList.add('flex');
+                updateLightbox();
             });
         });
 
-        lightboxClose.addEventListener('click', () => {
+        function closeLightbox() {
             lightbox.classList.add('hidden');
             lightbox.classList.remove('flex');
-        });
+        }
 
-        lightbox.addEventListener('click', (e) => {
-            if (e.target === lightbox) {
-                lightbox.classList.add('hidden');
-                lightbox.classList.remove('flex');
-            }
-        });
-
-        lightboxNext.addEventListener('click', () => {
-            currentIndex = (currentIndex + 1) % images.length;
-            showImage(currentIndex);
-        });
-
-        lightboxPrev.addEventListener('click', () => {
+        document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+        document.getElementById('lightbox-prev').addEventListener('click', () => {
             currentIndex = (currentIndex - 1 + images.length) % images.length;
-            showImage(currentIndex);
+            updateLightbox();
         });
-        
+        document.getElementById('lightbox-next').addEventListener('click', () => {
+            currentIndex = (currentIndex + 1) % images.length;
+            updateLightbox();
+        });
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) closeLightbox();
+        });
         document.addEventListener('keydown', (e) => {
             if (!lightbox.classList.contains('hidden')) {
-                if (e.key === 'ArrowRight') lightboxNext.click();
-                if (e.key === 'ArrowLeft') lightboxPrev.click();
-                if (e.key === 'Escape') lightboxClose.click();
+                if (e.key === 'ArrowRight') document.getElementById('lightbox-next').click();
+                if (e.key === 'ArrowLeft') document.getElementById('lightbox-prev').click();
+                if (e.key === 'Escape') closeLightbox();
             }
         });
-        
-       // --- NUEVO SCRIPT PARA EL CRUCIGRAMA INTERACTIVO (VERSIÓN CORREGIDA) ---
+
+        // --- SCRIPT PARA EL CRUCIGRAMA INTERACTIVO (VERSIÓN FINAL) ---
         document.addEventListener('DOMContentLoaded', () => {
             const crosswordContainer = document.getElementById('crossword-container');
             const checkButton = document.getElementById('check-crossword');
             const gridRows = 10;
-            const gridCols = 12;
+            const gridCols = 11;
 
-            // [palabra, fila_inicio, col_inicio, direccion, numero_pista]
             const words = [
                 ['PASTIZALES', 5, 0, 'h', 5],
-                ['GABIOTA', 0, 1, 'v', 4],
-                ['HUMEDAL', 2, 7, 'v', 3],
                 ['BAHIA', 4, 6, 'v', 1],
-                ['JUNCALES', 2, 10, 'v', 2]
+                ['JUNCALES', 2, 10, 'v', 2],
+                ['HUMEDAL', 2, 7, 'v', 3],
+                ['GABIOTA', 0, 1, 'v', 4]
             ];
-
             const solutions = {};
 
-            // Crear la cuadrícula y celdas
             for (let r = 0; r < gridRows; r++) {
                 for (let c = 0; c < gridCols; c++) {
                     const cellContainer = document.createElement('div');
@@ -440,7 +368,6 @@
                 }
             }
 
-            // Colocar las palabras en la cuadrícula
             words.forEach(([word, row, col, dir, clueNum]) => {
                 const clueSpan = document.createElement('span');
                 clueSpan.className = 'clue-number';
@@ -448,14 +375,12 @@
                 document.getElementById(`container-${row}-${col}`).appendChild(clueSpan);
 
                 for (let i = 0; i < word.length; i++) {
-                    let r = row;
-                    let c = col;
-                    if (dir === 'h') c += i;
-                    else r += i;
+                    let r = row, c = col;
+                    if (dir === 'h') c += i; else r += i;
 
                     const cellId = `cell-${r}-${c}`;
                     solutions[cellId] = word[i];
-
+                    
                     const container = document.getElementById(`container-${r}-${c}`);
                     if (!container.querySelector('input')) {
                         const input = document.createElement('input');
@@ -468,29 +393,23 @@
                 }
             });
 
-            // Rellenar los espacios vacíos para mantener la estructura
-             for (let r = 0; r < gridRows; r++) {
+            for (let r = 0; r < gridRows; r++) {
                 for (let c = 0; c < gridCols; c++) {
-                    const container = document.getElementById(`container-${r}-${c}`);
-                    if (container.children.length === 0) {
-                         container.classList.add('empty-cell');
+                    if (!document.getElementById(`container-${r}-${c}`).hasChildNodes()) {
+                        document.getElementById(`container-${r}-${c}`).classList.add('empty-cell');
                     }
                 }
             }
             
-            // Lógica de navegación y revisión
             crosswordContainer.addEventListener('keydown', (e) => {
                 const target = e.target;
                 if (target.tagName !== 'INPUT') return;
-
                 const [_, row, col] = target.id.split('-').map(Number);
                 let nextCell;
-
                 if (e.key === 'ArrowRight') nextCell = document.getElementById(`cell-${row}-${col + 1}`);
                 else if (e.key === 'ArrowLeft') nextCell = document.getElementById(`cell-${row}-${col - 1}`);
                 else if (e.key === 'ArrowDown') nextCell = document.getElementById(`cell-${row + 1}-${col}`);
                 else if (e.key === 'ArrowUp') nextCell = document.getElementById(`cell-${row - 1}-${col}`);
-                
                 if (nextCell) nextCell.focus();
             });
 
@@ -499,11 +418,8 @@
                     const cell = document.getElementById(cellId);
                     if (cell) {
                         cell.classList.remove('correct', 'incorrect');
-                        if (cell.value.toUpperCase() === solutions[cellId]) {
-                            cell.classList.add('correct');
-                        } else if (cell.value !== '') {
-                            cell.classList.add('incorrect');
-                        }
+                        if (cell.value.toUpperCase() === solutions[cellId]) cell.classList.add('correct');
+                        else if (cell.value !== '') cell.classList.add('incorrect');
                     }
                 }
             });
@@ -511,5 +427,6 @@
     </script>
 </body>
 </html>
+
 
 
