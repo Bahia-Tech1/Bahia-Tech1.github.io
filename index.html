@@ -353,11 +353,14 @@
             // Este es el bloque que debes reemplazar en tu código
             const words = [
             // [Palabra, Fila, Columna, Dirección, Pista]
+            // ESTE ES EL PLANO DEFINITIVO Y CORRECTO
+            const words = [
+                // [Palabra, Fila, Columna, Dirección, Pista]
                 ['PASTIZALES', 5, 0, 'h', 5],
-                ['GABIOTA',    4, 1, 'v', 4],
-                ['HUMEDAL',    2, 8, 'v', 3],
+                ['GABIOTA',    4, 1, 'v', 4], // <-- ESTA ES LA LÍNEA CORREGIDA
                 ['BAHIA',      4, 6, 'v', 1],
-                ['JUNCALES',   0, 7, 'v', 2]
+                ['JUNCALES',   0, 7, 'v', 2],
+                ['HUMEDAL',    2, 8, 'v', 3]
             ];
             const solutions = {};
 
@@ -429,6 +432,7 @@
     </script>
 </body>
 </html>
+
 
 
 
