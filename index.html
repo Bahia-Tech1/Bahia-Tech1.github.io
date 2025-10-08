@@ -224,26 +224,18 @@
             </div>
         </section>
 
-        <section id="crucigrama" class="scroll-reveal my-12 md:my-16 pt-16">
+<section id="crucigrama" class="scroll-reveal my-12 md:my-16 pt-16">
             <h2 class="text-3xl font-bold text-center mb-8 text-indigo-800">¡A Jugar!</h2>
             <p class="text-center text-gray-600 max-w-3xl mx-auto mb-6">
                 Demuestra lo que aprendiste. Completa el crucigrama con las palabras correctas. ¡Puedes usar las flechas del teclado para moverte!
             </p>
             <div class="flex flex-col lg:flex-row justify-center items-center lg:items-start gap-8">
-                <div id="crossword-container" class="crossword-grid">
-                    <div class="empty-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div><div class="cell-container"><span class="clue-number">4</span><input type="text" maxlength="1" id="cell-0-4" class="crossword-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div><div class="cell-container"><span class="clue-number">1</span><input type="text" maxlength="1" id="cell-0-8" class="crossword-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div>
-                    <div class="empty-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div><div class="cell-container"><input type="text" maxlength="1" id="cell-1-4" class="crossword-cell"></div><div class="empty-cell"></div><div class="cell-container"><span class="clue-number">3</span><input type="text" maxlength="1" id="cell-1-6" class="crossword-cell"></div><div class="empty-cell"></div><div class="cell-container"><input type="text" maxlength="1" id="cell-1-8" class="crossword-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div>
-                    <div class="empty-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div><div class="cell-container"><input type="text" maxlength="1" id="cell-2-4" class="crossword-cell"></div><div class="empty-cell"></div><div class="cell-container"><input type="text" maxlength="1" id="cell-2-6" class="crossword-cell"></div><div class="empty-cell"></div><div class="cell-container"><input type="text" maxlength="1" id="cell-2-8" class="crossword-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div>
-                    <div class="empty-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div><div class="cell-container"><input type="text" maxlength="1" id="cell-3-4" class="crossword-cell"></div><div class="empty-cell"></div><div class="cell-container"><input type="text" maxlength="1" id="cell-3-6" class="crossword-cell"></div><div class="empty-cell"></div><div class="cell-container"><input type="text" maxlength="1" id="cell-3-8" class="crossword-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div>
-                    <div class="cell-container"><span class="clue-number">5</span><input type="text" maxlength="1" id="cell-4-0" class="crossword-cell"></div><div class="cell-container"><input type="text" maxlength="1" id="cell-4-1" class="crossword-cell"></div><div class="cell-container"><input type="text" maxlength="1" id="cell-4-2" class="crossword-cell"></div><div class="cell-container"><input type="text" maxlength="1" id="cell-4-3" class="crossword-cell"></div><div class="cell-container"><input type="text" maxlength="1" id="cell-4-4" class="crossword-cell"></div><div class="cell-container"><input type="text" maxlength="1" id="cell-4-5" class="crossword-cell"></div><div class="cell-container"><input type="text" maxlength="1" id="cell-4-6" class="crossword-cell"></div><div class="cell-container"><input type="text" maxlength="1" id="cell-4-7" class="crossword-cell"></div><div class="cell-container"><input type="text" maxlength="1" id="cell-4-8" class="crossword-cell"></div><div class="cell-container"><input type="text" maxlength="1" id="cell-4-9" class="crossword-cell"></div><div class="cell-container"><input type="text" maxlength="1" id="cell-4-10" class="crossword-cell"></div><div class="cell-container"><span class="clue-number">2</span><input type="text" maxlength="1" id="cell-4-11" class="crossword-cell"></div>
-                    <div class="empty-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div><div class="cell-container"><input type="text" maxlength="1" id="cell-5-4" class="crossword-cell"></div><div class="empty-cell"></div><div class="cell-container"><input type="text" maxlength="1" id="cell-5-6" class="crossword-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div><div class="cell-container"><input type="text" maxlength="1" id="cell-5-11" class="crossword-cell"></div>
-                    <div class="empty-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div><div class="cell-container"><input type="text" maxlength="1" id="cell-6-4" class="crossword-cell"></div><div class="empty-cell"></div><div class="cell-container"><input type="text" maxlength="1" id="cell-6-6" class="crossword-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div><div class="cell-container"><input type="text" maxlength="1" id="cell-6-11" class="crossword-cell"></div>
-                    <div class="empty-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div><div class="cell-container"><input type="text" maxlength="1" id="cell-7-11" class="crossword-cell"></div>
-                </div>
+                <div id="crossword-container" class="crossword-grid" style="grid-template-columns: repeat(12, 30px); grid-template-rows: repeat(10, 30px);">
+                    </div>
 
                 <div class="text-gray-700">
                     <div class="mb-4">
-                        <h3 class="font-bold text-lg mb-2 text-indigo-700">Horizontales</h3>
+                        <h3 class="font-bold text-lg mb-2 text-indigo-700">Horizontal</h3>
                         <p><span class="font-bold">5.</span> Son como praderas de pasto que se adaptan al agua salada.</p>
                     </div>
                     <div>
@@ -420,60 +412,104 @@
             }
         });
         
-        // --- NUEVO SCRIPT PARA EL CRUCIGRAMA INTERACTIVO ---
+       // --- NUEVO SCRIPT PARA EL CRUCIGRAMA INTERACTIVO (VERSIÓN CORREGIDA) ---
         document.addEventListener('DOMContentLoaded', () => {
-            const solutions = {
-                // Horizontales
-                'cell-4-0': 'P', 'cell-4-1': 'A', 'cell-4-2': 'S', 'cell-4-3': 'T', 'cell-4-4': 'I', 'cell-4-5': 'Z', 'cell-4-6': 'A', 'cell-4-7': 'L', 'cell-4-8': 'E', 'cell-4-9': 'S',
-                // Verticales
-                'cell-0-8': 'B', 'cell-1-8': 'A', 'cell-2-8': 'H', 'cell-3-8': 'I', 'cell-4-8': 'A',
-                'cell-4-11': 'J', 'cell-5-11': 'U', 'cell-6-11': 'N', 'cell-7-11': 'C', 'cell-4-6': 'A', 'cell-5-6': 'L', 'cell-6-6': 'E', 'cell-7-6': 'S', // Corrección para juncales
-                'cell-1-6': 'H', 'cell-2-6': 'U', 'cell-3-6': 'M', 'cell-4-6': 'E', 'cell-5-6': 'D', 'cell-6-6': 'A', 'cell-7-6': 'L', // Corrección para humedal
-                'cell-0-4': 'G', 'cell-1-4': 'A', 'cell-2-4': 'B', 'cell-3-4': 'I', 'cell-4-4': 'O', 'cell-5-4': 'T', 'cell-6-4': 'A',
-            };
-        
             const crosswordContainer = document.getElementById('crossword-container');
-            const cells = crosswordContainer.querySelectorAll('.crossword-cell');
-        
+            const checkButton = document.getElementById('check-crossword');
+            const gridRows = 10;
+            const gridCols = 12;
+
+            // [palabra, fila_inicio, col_inicio, direccion, numero_pista]
+            const words = [
+                ['PASTIZALES', 5, 0, 'h', 5],
+                ['GABIOTA', 0, 1, 'v', 4],
+                ['HUMEDAL', 2, 7, 'v', 3],
+                ['BAHIA', 4, 6, 'v', 1],
+                ['JUNCALES', 2, 10, 'v', 2]
+            ];
+
+            const solutions = {};
+
+            // Crear la cuadrícula y celdas
+            for (let r = 0; r < gridRows; r++) {
+                for (let c = 0; c < gridCols; c++) {
+                    const cellContainer = document.createElement('div');
+                    cellContainer.className = 'cell-container';
+                    cellContainer.id = `container-${r}-${c}`;
+                    crosswordContainer.appendChild(cellContainer);
+                }
+            }
+
+            // Colocar las palabras en la cuadrícula
+            words.forEach(([word, row, col, dir, clueNum]) => {
+                const clueSpan = document.createElement('span');
+                clueSpan.className = 'clue-number';
+                clueSpan.textContent = clueNum;
+                document.getElementById(`container-${row}-${col}`).appendChild(clueSpan);
+
+                for (let i = 0; i < word.length; i++) {
+                    let r = row;
+                    let c = col;
+                    if (dir === 'h') c += i;
+                    else r += i;
+
+                    const cellId = `cell-${r}-${c}`;
+                    solutions[cellId] = word[i];
+
+                    const container = document.getElementById(`container-${r}-${c}`);
+                    if (!container.querySelector('input')) {
+                        const input = document.createElement('input');
+                        input.type = 'text';
+                        input.maxLength = 1;
+                        input.id = cellId;
+                        input.className = 'crossword-cell';
+                        container.appendChild(input);
+                    }
+                }
+            });
+
+            // Rellenar los espacios vacíos para mantener la estructura
+             for (let r = 0; r < gridRows; r++) {
+                for (let c = 0; c < gridCols; c++) {
+                    const container = document.getElementById(`container-${r}-${c}`);
+                    if (container.children.length === 0) {
+                         container.classList.add('empty-cell');
+                    }
+                }
+            }
+            
+            // Lógica de navegación y revisión
             crosswordContainer.addEventListener('keydown', (e) => {
                 const target = e.target;
                 if (target.tagName !== 'INPUT') return;
-        
+
                 const [_, row, col] = target.id.split('-').map(Number);
-        
                 let nextCell;
-                if (e.key === 'ArrowRight') {
-                    nextCell = document.getElementById(`cell-${row}-${col + 1}`);
-                } else if (e.key === 'ArrowLeft') {
-                    nextCell = document.getElementById(`cell-${row}-${col - 1}`);
-                } else if (e.key === 'ArrowDown') {
-                    nextCell = document.getElementById(`cell-${row + 1}-${col}`);
-                } else if (e.key === 'ArrowUp') {
-                    nextCell = document.getElementById(`cell-${row - 1}-${col}`);
-                }
-        
-                if (nextCell && !nextCell.classList.contains('empty-cell')) {
-                    nextCell.focus();
-                }
+
+                if (e.key === 'ArrowRight') nextCell = document.getElementById(`cell-${row}-${col + 1}`);
+                else if (e.key === 'ArrowLeft') nextCell = document.getElementById(`cell-${row}-${col - 1}`);
+                else if (e.key === 'ArrowDown') nextCell = document.getElementById(`cell-${row + 1}-${col}`);
+                else if (e.key === 'ArrowUp') nextCell = document.getElementById(`cell-${row - 1}-${col}`);
+                
+                if (nextCell) nextCell.focus();
             });
-        
-            document.getElementById('check-crossword').addEventListener('click', () => {
-                cells.forEach(cell => {
-                    const id = cell.id;
-                    const solution = solutions[id];
-                    if (solution) {
+
+            checkButton.addEventListener('click', () => {
+                for (const cellId in solutions) {
+                    const cell = document.getElementById(cellId);
+                    if (cell) {
                         cell.classList.remove('correct', 'incorrect');
-                        if (cell.value.toUpperCase() === solution) {
+                        if (cell.value.toUpperCase() === solutions[cellId]) {
                             cell.classList.add('correct');
                         } else if (cell.value !== '') {
                             cell.classList.add('incorrect');
                         }
                     }
-                });
+                }
             });
         });
-
     </script>
 </body>
 </html>
+
 
