@@ -363,8 +363,8 @@
         
                 const words = [
                     ['BAHIA',      0, 2, 'v', 1],
-                    ['JUNCALES',   1, 7, 'v', 2],
-                    ['HUMEDAL',    2, 3, 'h', 3],
+                    ['JUNCALES',   0, 7, 'v', 2], // Posición corregida
+                    ['PANTANO',    2, 3, 'h', 3], // Palabra cambiada para que encaje
                     ['GAVIOTA',    4, 1, 'h', 4],
                     ['PASTIZALES', 5, 0, 'h', 5]
                 ];
@@ -481,10 +481,11 @@
                 });
         
                 const firstCell = document.querySelector('.crossword-cell');
-                if (firstCell) firstCell.focus();
+                if (firstCell) firstCell.focus({ preventScroll: true });
             }
         });
     </script>
 </body>
 </html>
+
 
