@@ -3,73 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monitor Remoto</title>
+    <title>Control - Modo Seguro</title>
     <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
     <style>
-        body { font-family: sans-serif; text-align: center; background: #222; color: #fff; display: flex; flex-direction: column; height: 100vh; margin: 0; }
-        #video-container { flex-grow: 1; display: flex; align-items: center; justify-content: center; background: #000; }
+        body { background: #222; color: #fff; margin: 0; font-family: sans-serif; display: flex; flex-direction: column; height: 100vh; }
+        #video-wrap { flex: 1; background: #000; display: flex; justify-content: center; align-items: center; }
         video { max-width: 100%; max-height: 100%; }
-        #controls { padding: 20px; background: #333; }
-        input { padding: 10px; width: 60%; text-align: center; }
-        button.connect { padding: 10px; background: #2196F3; color: white; border: none; cursor: pointer; width: 30%; }
-        .btn-snap { background: #ff4757; color: white; width: 70px; height: 70px; border-radius: 50%; border: 3px solid #fff; font-size: 24px; cursor: pointer; display: none; margin-top: 10px; }
+        #controls { padding: 20px; background: #333; text-align: center; }
+        input { padding: 10px; width: 60%; text-align: center; margin-bottom: 10px; }
+        
+        /* Botón deshabilitado (gris) por defecto */
+        #btnConnect { padding: 10px 20px; background: #555; color: #aaa; border: none; cursor: not-allowed; width: 100%; font-weight: bold; }
+        /* Clase para habilitarlo (azul) */
+        #btnConnect.ready { background: #2196F3; color: #fff; cursor: pointer; }
+        
+        .btn-foto { background: #e74c3c; color: white; width: 80px; height: 80px; border-radius: 50%; border: 4px solid white; font-size: 24px; display: none; margin: 0 auto; cursor: pointer; }
+        
+        #log { font-size: 12px; color: #ccc; margin-top: 5px; }
     </style>
 </head>
 <body>
 
-    <div id="video-container">
+    <div id="video-wrap">
         <video id="remoteVideo" autoplay playsinline></video>
     </div>
 
     <div id="controls">
-        <div id="login">
-            <input type="text" id="remoteId" value="camara-bahia" placeholder="Nombre de la cámara">
-            <button class="connect" onclick="conectar()">Ver</button>
+        <div id="login-box">
+            <p id="log">Conectando a la red...</p>
+            <input type="text" id="target-id" value="camara-casa" placeholder="Nombre de la cámara">
+            <br>
+            <button id="btnConnect" onclick="conectar()" disabled>ESPERANDO RED...</button>
         </div>
-        <button id="btnSnap" class="btn-snap" onclick="pedirFoto()">📷</button>
-        <p id="msg" style="color:#aaa; font-size:12px; margin-top:5px;">Listo para conectar</p>
+        <button id="btnFoto" class="btn-foto" onclick="pedirFoto()">📷</button>
     </div>
 
     <script>
-        const peer = new Peer(); 
+        const btnConnect = document.getElementById('btnConnect');
+        const log = document.getElementById('log');
         const remoteVideo = document.getElementById('remoteVideo');
-        const msg = document.getElementById('msg');
         let dataConn = null;
 
+        // Configuración con servidores Google
+        const peer = new Peer(null, {
+            config: {
+                iceServers: [
+                    { urls: 'stun:stun.l.google.com:19302' },
+                    { urls: 'stun:stun1.l.google.com:19302' }
+                ]
+            }
+        });
+
+        // 1. Cuando MI teléfono tiene señal con el servidor
+        peer.on('open', (id) => {
+            log.innerText = "Red OK. Mi ID: " + id;
+            log.style.color = "#4CAF50";
+            // Habilitamos el botón
+            btnConnect.innerText = "CONECTAR A CÁMARA";
+            btnConnect.disabled = false;
+            btnConnect.classList.add('ready');
+        });
+
+        peer.on('error', (err) => {
+            log.innerText = "Error de red: " + err.type;
+            alert("Error: " + err.type);
+        });
+
         function conectar() {
-            const targetId = document.getElementById('remoteId').value;
-            if(!targetId) return;
+            const target = document.getElementById('target-id').value.trim();
+            if(!target) return;
 
-            msg.innerText = "Buscando a " + targetId + "...";
+            log.innerText = "Llamando a " + target + "...";
+            btnConnect.innerText = "Llamando...";
 
-            // Conectar Video
-            const call = peer.call(targetId, null);
+            // Llamada de Video
+            const call = peer.call(target, null);
             
-            // Manejo de errores al llamar
-            if(!call) return alert("Error al crear llamada");
-            
-            // Si la llamada falla después de iniciar (ej: ID no existe)
-            setTimeout(() => {
-                if(!remoteVideo.srcObject) msg.innerText = "No responde... ¿Está prendida la cámara?";
-            }, 4000);
+            if(!call) {
+                return alert("Error interno: No se pudo generar la llamada.");
+            }
 
             call.on('stream', (stream) => {
-                msg.innerText = "¡Conectado!";
+                log.innerText = "¡Video recibido!";
                 remoteVideo.srcObject = stream;
-                document.getElementById('login').style.display = 'none';
-                document.getElementById('btnSnap').style.display = 'inline-block';
+                document.getElementById('login-box').style.display = 'none';
+                document.getElementById('btnFoto').style.display = 'block';
             });
 
-            call.on('error', (err) => {
-                 alert("Error llamada: " + err);
-            });
+            call.on('error', (err) => alert("Error llamada: " + err));
 
-            // Conectar Datos (Botón)
-            dataConn = peer.connect(targetId);
+            // Canal de datos para el botón
+            dataConn = peer.connect(target);
         }
 
         function pedirFoto() {
-            if(dataConn) dataConn.send('TOMAR_FOTO');
+            if(dataConn) dataConn.send('FOTO');
         }
     </script>
 </body>
