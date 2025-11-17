@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cámara Emisora (Con Disparador)</title>
+    <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
+    <style>
+        body { font-family: sans-serif; text-align: center; background: #000; color: #fff; margin: 0; overflow: hidden; }
+        video { width: 100%; height: 100vh; object-fit: cover; } /* Video a pantalla completa */
+        .overlay { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 5px; }
+        #my-id { color: #0f0; font-weight: bold; }
+        /* El canvas lo usamos para procesar la foto, pero lo ocultamos */
+        canvas { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="overlay">
+        <p>ID: <span id="my-id">Generando...</span></p>
+    </div>
+
+    <video id="localVideo" autoplay muted playsinline></video>
+    <canvas id="photoCanvas"></canvas>
+
+    <script>
+        const peer = new Peer();
+        const myIdSpan = document.getElementById('my-id');
+        const video = document.getElementById('localVideo');
+        const canvas = document.getElementById('photoCanvas');
+        const ctx = canvas.getContext('2d');
+
+        peer.on('open', (id) => {
+            myIdSpan.innerText = id;
+        });
+
+        // Acceder a la cámara trasera con la máxima resolución posible
+        navigator.mediaDevices.getUserMedia({ 
+            video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } }, 
+            audio: false 
+        }).then((stream) => {
+            video.srcObject = stream;
+
+            // Responder llamadas de video
+            peer.on('call', (call) => {
+                call.answer(stream);
+            });
+
+            // ESCUCHAR COMANDOS (Esta es la parte nueva)
+            peer.on('connection', (conn) => {
+                conn.on('data', (data) => {
+                    console.log("Comando recibido:", data);
+                    if (data === 'TOMAR_FOTO') {
+                        tomarFoto();
+                    }
+                });
+            });
+
+        }).catch(err => alert("Error de cámara: " + err));
+
+        // Función para capturar y descargar la foto
+        function tomarFoto() {
+            // 1. Ajustar canvas al tamaño del video
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            // 2. Dibujar el frame actual del video en el canvas
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // 3. Crear enlace de descarga
+            const imageURL = canvas.toDataURL('image/png');
+            const link = document.createElement('a');
+            link.href = imageURL;
+            link.download = 'foto_remota_' + new Date().getTime() + '.png';
+            link.click(); // Simula el clic para guardar
+            
+            // Efecto visual de flash
+            document.body.style.backgroundColor = "white";
+            setTimeout(() => document.body.style.backgroundColor = "black", 100);
+        }
+    </script>
+</body>
+</html>
