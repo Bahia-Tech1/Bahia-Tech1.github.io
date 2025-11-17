@@ -3,77 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cámara Emisora (Con Disparador)</title>
+    <title>Cámara Fija</title>
     <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
     <style>
         body { font-family: sans-serif; text-align: center; background: #000; color: #fff; margin: 0; overflow: hidden; }
-        video { width: 100%; height: 100vh; object-fit: cover; } /* Video a pantalla completa */
-        .overlay { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 5px; }
-        #my-id { color: #0f0; font-weight: bold; }
-        /* El canvas lo usamos para procesar la foto, pero lo ocultamos */
-        canvas { display: none; }
+        video { width: 100%; height: 100vh; object-fit: cover; }
+        .overlay { 
+            position: absolute; top: 0; left: 0; width: 100%; 
+            background: rgba(0,0,0,0.7); padding: 20px; z-index: 10;
+        }
+        input { padding: 10px; font-size: 16px; width: 60%; text-align: center; }
+        button { padding: 10px 20px; font-size: 16px; background: #4CAF50; color: white; border: none; cursor: pointer; }
+        #status { margin-top: 10px; color: #ffff00; font-weight: bold; }
+        /* Ocultar la configuración una vez conectado */
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
-    <div class="overlay">
-        <p>ID: <span id="my-id">Generando...</span></p>
+    <div id="config-panel" class="overlay">
+        <h3>1. Ponle un nombre a tu cámara</h3>
+        <p>Escribe un nombre simple (ej: camara1)</p>
+        <input type="text" id="custom-id" value="camara-bahia" placeholder="Nombre de la cámara">
+        <br><br>
+        <button onclick="iniciarCamara()">INICIAR CÁMARA</button>
+        <p id="status">Esperando...</p>
+        <p><small>⚠️ ¡No dejes que se apague la pantalla!</small></p>
     </div>
 
     <video id="localVideo" autoplay muted playsinline></video>
-    <canvas id="photoCanvas"></canvas>
+    <canvas id="photoCanvas" style="display:none;"></canvas>
 
     <script>
-        const peer = new Peer();
-        const myIdSpan = document.getElementById('my-id');
+        let peer = null;
         const video = document.getElementById('localVideo');
+        const status = document.getElementById('status');
+        const configPanel = document.getElementById('config-panel');
         const canvas = document.getElementById('photoCanvas');
         const ctx = canvas.getContext('2d');
 
-        peer.on('open', (id) => {
-            myIdSpan.innerText = id;
-        });
+        function iniciarCamara() {
+            const nombre = document.getElementById('custom-id').value.trim();
+            if(!nombre) return alert("Escribe un nombre");
 
-        // Acceder a la cámara trasera con la máxima resolución posible
-        navigator.mediaDevices.getUserMedia({ 
-            video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } }, 
-            audio: false 
-        }).then((stream) => {
-            video.srcObject = stream;
+            status.innerText = "Conectando al servidor...";
 
-            // Responder llamadas de video
-            peer.on('call', (call) => {
-                call.answer(stream);
+            // Creamos el Peer con TU nombre elegido
+            peer = new Peer(nombre);
+
+            peer.on('open', (id) => {
+                status.innerText = "¡Listo! Tu ID es: " + id;
+                status.style.color = "#0f0";
+                // Ocultamos el panel para ver la camara, pero dejamos el ID visible un momento
+                setTimeout(() => configPanel.style.display = 'none', 3000);
             });
 
-            // ESCUCHAR COMANDOS (Esta es la parte nueva)
-            peer.on('connection', (conn) => {
-                conn.on('data', (data) => {
-                    console.log("Comando recibido:", data);
-                    if (data === 'TOMAR_FOTO') {
-                        tomarFoto();
-                    }
+            peer.on('error', (err) => {
+                console.error(err);
+                if (err.type === 'unavailable-id') {
+                    status.innerText = "Ese nombre ya está en uso. Prueba otro.";
+                    alert("El nombre '" + nombre + "' ya lo está usando alguien. Cambia el nombre (ej: camara-bahia-2).");
+                } else {
+                    status.innerText = "Error: " + err.type;
+                }
+            });
+
+            // Activar video
+            navigator.mediaDevices.getUserMedia({ 
+                video: { facingMode: 'environment', width: { ideal: 1280 } }, 
+                audio: false 
+            }).then((stream) => {
+                video.srcObject = stream;
+
+                peer.on('call', (call) => {
+                    console.log("Contestando llamada...");
+                    call.answer(stream);
                 });
+
+                peer.on('connection', (conn) => {
+                    conn.on('data', (data) => {
+                        if (data === 'TOMAR_FOTO') tomarFoto();
+                    });
+                });
+
+            }).catch(err => {
+                alert("Error de cámara: " + err);
             });
+        }
 
-        }).catch(err => alert("Error de cámara: " + err));
-
-        // Función para capturar y descargar la foto
         function tomarFoto() {
-            // 1. Ajustar canvas al tamaño del video
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
-            // 2. Dibujar el frame actual del video en el canvas
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            
-            // 3. Crear enlace de descarga
-            const imageURL = canvas.toDataURL('image/png');
             const link = document.createElement('a');
-            link.href = imageURL;
-            link.download = 'foto_remota_' + new Date().getTime() + '.png';
-            link.click(); // Simula el clic para guardar
-            
-            // Efecto visual de flash
+            link.href = canvas.toDataURL('image/png');
+            link.download = 'foto_' + Date.now() + '.png';
+            link.click();
+            // Flash visual
             document.body.style.backgroundColor = "white";
             setTimeout(() => document.body.style.backgroundColor = "black", 100);
         }
