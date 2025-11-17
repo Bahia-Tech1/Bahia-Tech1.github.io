@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control Remoto</title>
+    <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
+    <style>
+        body { font-family: sans-serif; text-align: center; background: #222; color: #fff; display: flex; flex-direction: column; height: 100vh; margin: 0; }
+        
+        /* Área del video */
+        #video-container { flex-grow: 1; display: flex; align-items: center; justify-content: center; background: #000; }
+        video { max-width: 100%; max-height: 100%; }
+
+        /* Controles */
+        #controls { padding: 20px; background: #333; }
+        input { padding: 10px; width: 150px; }
+        
+        .btn-connect { background: #2196F3; color: white; padding: 10px; border: none; cursor: pointer; }
+        
+        /* Botón grande de disparo */
+        .btn-snap { 
+            background: #ff4757; color: white; 
+            width: 80px; height: 80px; 
+            border-radius: 50%; border: 4px solid #fff; 
+            font-size: 30px; cursor: pointer; margin-top: 10px;
+        }
+        .btn-snap:active { transform: scale(0.95); background: #ff6b81; }
+
+    </style>
+</head>
+<body>
+
+    <div id="video-container">
+        <video id="remoteVideo" autoplay playsinline></video>
+    </div>
+
+    <div id="controls">
+        <div id="connection-panel">
+            <input type="text" id="remoteId" placeholder="ID de la cámara">
+            <button class="btn-connect" onclick="conectar()">Conectar</button>
+        </div>
+        <br>
+        <button class="btn-snap" onclick="enviarOrdenFoto()">📷</button>
+    </div>
+
+    <script>
+        const peer = new Peer();
+        const remoteVideo = document.getElementById('remoteVideo');
+        let dataConnection = null; // Aquí guardaremos la conexión de datos
+
+        function conectar() {
+            const remoteId = document.getElementById('remoteId').value;
+            if (!remoteId) return alert("Falta el ID");
+
+            // 1. Conexión de VIDEO (para ver)
+            const call = peer.call(remoteId, null);
+            call.on('stream', (remoteStream) => {
+                remoteVideo.srcObject = remoteStream;
+                document.getElementById('connection-panel').style.display = 'none'; // Ocultar panel conexión
+            });
+
+            // 2. Conexión de DATOS (para controlar)
+            dataConnection = peer.connect(remoteId);
+            dataConnection.on('open', () => {
+                console.log("Conexión de datos establecida");
+                alert("¡Conectado! Ya puedes tomar fotos.");
+            });
+        }
+
+        function enviarOrdenFoto() {
+            if (dataConnection && dataConnection.open) {
+                // Enviamos el comando
+                dataConnection.send('TOMAR_FOTO');
+            } else {
+                alert("No estás conectado a la cámara todavía.");
+            }
+        }
+    </script>
+</body>
+</html>
