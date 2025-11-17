@@ -3,27 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control Remoto v2</title>
+    <title>Monitor Remoto</title>
     <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
     <style>
         body { font-family: sans-serif; text-align: center; background: #222; color: #fff; display: flex; flex-direction: column; height: 100vh; margin: 0; }
-        
         #video-container { flex-grow: 1; display: flex; align-items: center; justify-content: center; background: #000; }
-        video { max-width: 100%; max-height: 100%; border: 2px solid #333; }
-
+        video { max-width: 100%; max-height: 100%; }
         #controls { padding: 20px; background: #333; }
-        input { padding: 10px; width: 150px; font-size: 16px; }
-        
-        .btn-connect { background: #2196F3; color: white; padding: 10px; border: none; cursor: pointer; font-size: 16px; border-radius: 4px;}
-        
-        .btn-snap { 
-            background: #ff4757; color: white; 
-            width: 80px; height: 80px; 
-            border-radius: 50%; border: 4px solid #fff; 
-            font-size: 30px; cursor: pointer; margin-top: 10px;
-            display: none; /* Oculto hasta que conecte */
-        }
-        #status-msg { color: #aaa; margin-top: 10px; font-size: 14px;}
+        input { padding: 10px; width: 60%; text-align: center; }
+        button.connect { padding: 10px; background: #2196F3; color: white; border: none; cursor: pointer; width: 30%; }
+        .btn-snap { background: #ff4757; color: white; width: 70px; height: 70px; border-radius: 50%; border: 3px solid #fff; font-size: 24px; cursor: pointer; display: none; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -33,102 +22,54 @@
     </div>
 
     <div id="controls">
-        <div id="connection-panel">
-            <h3>Paso 1: Conectar</h3>
-            <input type="text" id="remoteId" placeholder="Escribe el ID aquí">
-            <br><br>
-            <button id="btnConnect" class="btn-connect" onclick="conectar()">CONECTAR</button>
+        <div id="login">
+            <input type="text" id="remoteId" value="camara-bahia" placeholder="Nombre de la cámara">
+            <button class="connect" onclick="conectar()">Ver</button>
         </div>
-        
-        <p id="status-msg">Esperando ID...</p>
-
-        <button id="btnSnap" class="btn-snap" onclick="enviarOrdenFoto()">📷</button>
+        <button id="btnSnap" class="btn-snap" onclick="pedirFoto()">📷</button>
+        <p id="msg" style="color:#aaa; font-size:12px; margin-top:5px;">Listo para conectar</p>
     </div>
 
     <script>
-        // Verificamos si la librería cargó
-        if (typeof Peer === 'undefined') {
-            alert("ERROR CRÍTICO: No se cargó la librería PeerJS. Revisa tu conexión a internet.");
-        }
-
-        const peer = new Peer(); // Creamos nuestro propio ID automáticamente
-        
+        const peer = new Peer(); 
         const remoteVideo = document.getElementById('remoteVideo');
-        const btnConnect = document.getElementById('btnConnect');
-        const statusMsg = document.getElementById('status-msg');
-        const connectionPanel = document.getElementById('connection-panel');
-        const btnSnap = document.getElementById('btnSnap');
-        
-        let dataConnection = null;
-
-        // 1. Mensaje si hay error en PeerJS
-        peer.on('error', (err) => {
-            console.error(err);
-            alert("Error de PeerJS: " + err.type);
-            statusMsg.innerText = "Error: " + err.type;
-            btnConnect.disabled = false;
-            btnConnect.innerText = "Reintentar";
-        });
-
-        peer.on('open', (id) => {
-            console.log("Mi ID local es: " + id);
-            statusMsg.innerText = "Listo para conectar. Mi red está OK.";
-        });
+        const msg = document.getElementById('msg');
+        let dataConn = null;
 
         function conectar() {
-            const remoteId = document.getElementById('remoteId').value.trim(); // .trim() quita espacios accidentales
+            const targetId = document.getElementById('remoteId').value;
+            if(!targetId) return;
+
+            msg.innerText = "Buscando a " + targetId + "...";
+
+            // Conectar Video
+            const call = peer.call(targetId, null);
             
-            if (!remoteId) {
-                return alert("¡Oye! Tienes que escribir el ID de la cámara primero.");
-            }
-
-            // Feedback visual: El usuario sepa que hizo click
-            btnConnect.disabled = true;
-            btnConnect.innerText = "Conectando...";
-            statusMsg.innerText = "Buscando a la cámara " + remoteId + "...";
-
-            // --- CONEXIÓN DE VIDEO ---
-            const call = peer.call(remoteId, null);
+            // Manejo de errores al llamar
+            if(!call) return alert("Error al crear llamada");
             
-            if (!call) {
-                alert("No se pudo iniciar la llamada. Revisa el ID.");
-                btnConnect.disabled = false;
-                return;
-            }
+            // Si la llamada falla después de iniciar (ej: ID no existe)
+            setTimeout(() => {
+                if(!remoteVideo.srcObject) msg.innerText = "No responde... ¿Está prendida la cámara?";
+            }, 4000);
 
-            call.on('stream', (remoteStream) => {
-                statusMsg.innerText = "¡Video recibido!";
-                remoteVideo.srcObject = remoteStream;
-                // Mostrar controles de cámara
-                connectionPanel.style.display = 'none';
-                btnSnap.style.display = 'inline-block';
+            call.on('stream', (stream) => {
+                msg.innerText = "¡Conectado!";
+                remoteVideo.srcObject = stream;
+                document.getElementById('login').style.display = 'none';
+                document.getElementById('btnSnap').style.display = 'inline-block';
             });
 
-            call.on('close', () => {
-                alert("La llamada se cortó.");
-                location.reload();
+            call.on('error', (err) => {
+                 alert("Error llamada: " + err);
             });
 
-            // --- CONEXIÓN DE DATOS (Para el botón) ---
-            dataConnection = peer.connect(remoteId);
-            
-            dataConnection.on('open', () => {
-                console.log("Canal de datos abierto");
-            });
-            
-            dataConnection.on('error', (err) => {
-                alert("Error en datos: " + err);
-            });
+            // Conectar Datos (Botón)
+            dataConn = peer.connect(targetId);
         }
 
-        function enviarOrdenFoto() {
-            if (dataConnection && dataConnection.open) {
-                dataConnection.send('TOMAR_FOTO');
-                // Pequeña vibración si el navegador lo soporta
-                if (navigator.vibrate) navigator.vibrate(50);
-            } else {
-                alert("Error: No hay conexión de datos con la cámara.");
-            }
+        function pedirFoto() {
+            if(dataConn) dataConn.send('TOMAR_FOTO');
         }
     </script>
 </body>
